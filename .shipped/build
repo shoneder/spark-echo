@@ -1,3 +1,4 @@
 #!/bin/bash
 
 easy_install flask
+easy_install requests
