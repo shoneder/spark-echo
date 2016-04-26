@@ -7,6 +7,7 @@ requests.packages.urllib3.disable_warnings()
 
 app = Flask(__name__)
 authorization = "notset"
+lastmessage = "notset"
 
 @app.route("/")
 def hello():
@@ -31,16 +32,17 @@ def webhook():
 
         # convert the message id into readable text
         message = getmessage(message_id)
+
         #message = "testlocal"
         #print(message)
 
         # check if the message is the command to get hosts
-        if message == "AUSTRIA":
+        if message == "datacenter":
             # post the list of hosts into the Spark room
             postmessage(person_id, person_email, room_id,"yes...we rock")
             #print ("austria123")
-        else:
-            postmessage(person_id, person_email, room_id, message)
+        elif message == "ping":
+            postmessage(person_id, person_email, room_id, "pong")
             #print ("message")
         return message
     except:
