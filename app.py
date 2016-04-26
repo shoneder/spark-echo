@@ -12,6 +12,13 @@ admins = "notset"
 apic_user="user"
 apic_password="password"
 apicem = None
+auto_text = ["pong",
+             "yes...we rock",
+             "you are admin",
+             "we are good to talk to apic-em",
+             "seems there is a problem to connect apic-em",
+             "shouldn't you check for a service ticket on apic-em?"
+             ]
 
 @app.route("/")
 def hello():
@@ -45,12 +52,18 @@ def webhook():
         # check if the message is the command to get hosts
         if message == "datacenter":
             # post the list of hosts into the Spark room
-            postmessage( room_id,"yes...we rock")
+            postmessage(room_id,"yes...we rock")
             #print ("austria123")
         elif message == "ping":
             postmessage( room_id, "pong")
         elif person_email_id in admins:
-            postmessage(room_id,"you are admin")
+            #note that we are admin
+            if message in auto_text:
+                return
+            else:
+                postmessage(room_id,"you are admin")
+
+            # apicem routine
             if message == "apicem?":
                 resp = apicem.getServiceTicket()
                 if resp:
