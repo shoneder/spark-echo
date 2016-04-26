@@ -18,7 +18,7 @@ auto_text = ["pong",
              "we are good to talk to apic-em",
              "seems there is a problem to connect apic-em",
              "shouldn't you check for a service ticket on apic-em?"
-             ]
+             "apicem"]
 
 @app.route("/")
 def hello():
@@ -58,7 +58,7 @@ def webhook():
             postmessage( room_id, "pong")
         elif person_email_id in admins:
             #note that we are admin
-            if message in auto_text:
+            if message.startswith(tuple(auto_text)):
                 return
             else:
                 postmessage(room_id,"you are admin")
