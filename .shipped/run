@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python app.py $AUTHORIZATION
+python app.py $AUTHORIZATION $ADMINS $APIC_USER $APIC_PASSWORD
 
