@@ -43,6 +43,8 @@ def webhook():
             #print ("austria123")
         elif message == "ping":
             postmessage(person_id, person_email, room_id, "pong")
+        elif person_email == 'bloitzl@cisco.com':
+            postmessage(person_id, person_email, room_id, "Bernd...ich arbeite jetzt autonom")
             #print ("message")
         return message
     except:
