@@ -1,7 +1,9 @@
-from flask import Flask,request
+from flask import Flask,request, make_response
 from apicem import APICBasicTools
+from apicemtopology import APICEMTopologyWrapper
 import sys
 import requests
+import json
 
 
 requests.packages.urllib3.disable_warnings()
@@ -15,6 +17,7 @@ generic_commands = {"datacenter":"yes...we rock",
 
 apic_user="user"
 apic_password="password"
+apic_ip = "sandboxapic.cisco.com:9443"
 apicem = None
 apicem_commands = ["count","location"]
 
@@ -26,6 +29,19 @@ def hello():
 @app.route("/test")
 def test():
     return "test/Hello World"
+
+@app.route("/topology")
+def topology():
+    print("we got called")
+    topology = APICEMTopologyWrapper(apic_ip,apic_user,apic_password)
+    print("we have a wrapper")
+    display = topology.getNextTopology()
+    print("we have a topology")
+    response = make_response(json.dumps(display))
+    print("prepare response")
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 # Webhook page will trigger webhooks() function
 @app.route("/webhook", methods=['POST'])
@@ -139,7 +155,7 @@ if __name__ == "__main__":
         apic_password = sys.argv[4]
     else:
         authorization = 'unknown'
-    apicem = APICBasicTools("sandboxapic.cisco.com:9443",apic_user,apic_password)
+    apicem = APICBasicTools(apic_ip,apic_user,apic_password)
     app.run(debug=True,host='0.0.0.0')
 
 

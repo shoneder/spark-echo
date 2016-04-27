@@ -1,6 +1,6 @@
 import os
 import random
-from apicem import  APICBasicTools
+from apicem import APICBasicTools
 import requests
 import json
 import sys
@@ -36,18 +36,21 @@ class APICEMTopologyWrapper(object):
         if self._basicTools.getServiceTicket() == False:
             return "Error occured"
 
+    def getNextTopology(self):
+        resp=self.getPhysicalTopology()
+        return self.convertTopologyToNext(resp)
 
     def getPhysicalTopology(self):
         topology = None
-        #result = self._basicTools.doRestCall(GET,self._physicalTopology)
-        f = open("sample.response",'r')
-        result = json.load(f)
-        f.close()
+        result = self._basicTools.doRestCall(GET,self._physicalTopology)
+        #f = open("sample.response",'r')
+        #result = json.load(f)
+        #f.close()
         print(result)
         topology=result["response"]
         return topology
 
-    def getNextFormattedTopology(self, apic_topology):
+    def convertTopologyToNext(self, apic_topology):
         next_topology = apic_topology
         apic_node_id_mapping = {}
         apic_link_id_mapping = {}
@@ -57,8 +60,8 @@ class APICEMTopologyWrapper(object):
         for i in range(0,len(apic_topology["nodes"])) :
             apic_node_id_mapping[apic_topology["nodes"][i]["id"]] = node_id
             next_topology["nodes"][i]["id"] = node_id
-            next_topology["nodes"][i]["x"] = random.randint(1, 800)
-            next_topology["nodes"][i]["y"] = random.randint(1, 400)
+            #next_topology["nodes"][i]["x"] = random.randint(1, 800)
+            #next_topology["nodes"][i]["y"] = random.randint(1, 400)
             node_id+=1
             if "family" in apic_topology["nodes"][i].keys():
                 if apic_topology["nodes"][i]["family"].lower() in self._mapFamilyToIcon.keys():
@@ -72,7 +75,7 @@ class APICEMTopologyWrapper(object):
                 next_topology["links"][i]["source"] = apic_node_id_mapping[apic_topology["links"][i]["source"]]
                 next_topology["links"][i]["target"] = apic_node_id_mapping[apic_topology["links"][i]["target"]]
                 link_id+=1
-        #pprint.pprint(next_topology)
+        pprint.pprint(next_topology)
         return next_topology
 
 
