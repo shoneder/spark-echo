@@ -9,16 +9,15 @@ requests.packages.urllib3.disable_warnings()
 app = Flask(__name__)
 authorization = "notset"
 admins = "notset"
+
+generic_commands = {"datacenter":"yes...we rock",
+                    "ping":"pong"}
+
 apic_user="user"
 apic_password="password"
 apicem = None
-auto_text = ["pong",
-             "yes...we rock",
-             "you are admin",
-             "we are good to talk to apic-em",
-             "seems there is a problem to connect apic-em",
-             "shouldn't you check for a service ticket on apic-em?"
-             "apicem"]
+apicem_commands = ["count","location"]
+
 
 @app.route("/")
 def hello():
@@ -34,7 +33,7 @@ def webhook():
     try:
         # Get the json data
         json = request.get_json()
-        #print("json=%s"%json)
+
         # parse the message id, person id, person email, and room id
         message_id = json["data"]["id"]
         person_id = json["data"]["personId"]
@@ -46,38 +45,32 @@ def webhook():
         # convert the message id into readable text
         message = getmessage(message_id)
 
-        #message = "testlocal"
-        #print(message)
+        if message.startswith("shipped.io#"):
+            return "autoanswer"
 
-        # check if the message is the command to get hosts
-        if message == "datacenter":
-            # post the list of hosts into the Spark room
-            postmessage(room_id,"yes...we rock")
-            #print ("austria123")
-        elif message == "ping":
-            postmessage( room_id, "pong")
+        # check if the message is a known command
+        if message in generic_commands.keys():
+            postmessage(room_id,generic_commands[message])
         elif person_email_id in admins:
-            #note that we are admin
-            if message.startswith(tuple(auto_text)):
-                return
-            else:
-                postmessage(room_id,"you are admin")
-
             # apicem routine
             if message == "apicem?":
                 resp = apicem.getServiceTicket()
                 if resp:
                     postmessage(room_id,"we are good to talk to apic-em")
                 else:
-                    postmessage(room_id,"seems there is a problem to connect apic-em")
+                    postmessage(room_id,"seems there is a problem to connect to apic-em")
             elif message.startswith("apicem:"):
                 if apicem._ticket == None:
-                    postmessage(room_id,"shouldn't you check for a service ticket on apic-em?")
+                    postmessage(room_id,"shouldn't you check for a service ticket on apicem?")
                 else:
                     cmd = message.split("apicem:")[1]
-                    resp = apicem.doRestCall("get","/api/v1/network-device/%s"%cmd)
-                    postmessage(room_id,"we received:%s"%resp)
-            #print ("message")
+                    if cmd in apicem_commands:
+                        resp = apicem.doRestCall("get","/api/v1/network-device/%s"%cmd)
+                        postmessage(room_id,"we received:%s"%resp)
+                    else:
+                        postmessage(room_id,"sorry, we haven't implemented that command yet")
+            else:
+                postmessage(room_id,"you are admin")
         return message
     except:
         return "huch...something went wrong"
@@ -125,7 +118,7 @@ def postmessage( room_id, text):
     # create message in Spark room
     payload = {
         "roomId" : room_id,
-        "text" : text
+        "text" : "shipped.io#%s"%text
     }
 
     # create POST request do not verify SSL certificate for simplicity of this example
