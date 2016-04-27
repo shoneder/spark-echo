@@ -43,7 +43,7 @@ def webhook():
         person_email_id = person_email.split("@")[0]
 
         # convert the message id into readable text
-        message = getmessage(message_id)
+        message = getmessage(message_id).lower()
 
         if message.startswith("shipped.io#"):
             return "autoanswer"
