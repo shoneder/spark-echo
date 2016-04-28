@@ -32,13 +32,9 @@ def test():
 
 @app.route("/topology")
 def topology():
-    print("we got called")
     topology = APICEMTopologyWrapper(apic_ip,apic_user,apic_password)
-    print("we have a wrapper")
     display = topology.getNextTopology()
-    print("we have a topology")
     response = make_response(json.dumps(display))
-    print("prepare response")
     response.headers['Content-Type'] = 'application/json'
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response

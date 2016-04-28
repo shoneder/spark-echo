@@ -71,10 +71,12 @@ class APICEMTopologyWrapper(object):
         for i in range(0,len(apic_topology["links"])) :
             if ("id" in next_topology["links"][i].keys()):
                 apic_link_id_mapping[apic_topology["links"][i]["id"]] = link_id
-                next_topology["links"][i]["id"] = link_id
-                next_topology["links"][i]["source"] = apic_node_id_mapping[apic_topology["links"][i]["source"]]
-                next_topology["links"][i]["target"] = apic_node_id_mapping[apic_topology["links"][i]["target"]]
-                link_id+=1
+
+            next_topology["links"][i]["id"] = link_id
+            next_topology["links"][i]["source"] = apic_node_id_mapping[apic_topology["links"][i]["source"]]
+            next_topology["links"][i]["target"] = apic_node_id_mapping[apic_topology["links"][i]["target"]]
+            link_id+=1
+
         pprint.pprint(next_topology)
         return next_topology
 
