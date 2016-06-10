@@ -3,16 +3,16 @@ git:
   path: github.com/shoneder/spark-echo
 script:
   - echo "build commands"
-  - echo "no build command"
-  - echo "no test command"
+  - .shipped/build
+  - .shipped/test
 clone:
   path: github.com/shoneder/spark-echo
 build:
   image: python:3.5
   commands:
     - echo "build commands"
-    - echo "no build command"
-    - echo "no test command"
+    - .shipped/build
+    - .shipped/test
 publish:
   docker:
     file: ./Dockerfile
@@ -22,4 +22,12 @@ publish:
     repo: $$docker_repo
     email: $$docker_user_email
     tag: $$COMMIT
+
+notify:
+-  webhook:
+-    image: shippedrepos-docker-drone.bintray.io/drone-webhook
+-    urls:
+-      - "https://api.ciscoshipped.io/webhooks/drone"
+-    on_success: true
+-    on_failure: true
     
