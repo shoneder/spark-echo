@@ -113,7 +113,7 @@ def getmessage(message_id):
     return text
 
 # the post function
-def postmessage( room_id, text):
+def postmessage(room_id, text):
     # define a variable for the hostname of Spark
     hostname = ""
 

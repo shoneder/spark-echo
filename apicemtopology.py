@@ -77,7 +77,7 @@ class APICEMTopologyWrapper(object):
             next_topology["links"][i]["target"] = apic_node_id_mapping[apic_topology["links"][i]["target"]]
             link_id+=1
 
-        pprint.pprint(next_topology)
+        #pprint.pprint(next_topology)
         return next_topology
 
 
